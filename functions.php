@@ -12,50 +12,49 @@ add_action('wp_enqueue_scripts', function(){
 });
 
 add_action("rest_api_init", function(){
+	register_rest_route("track-time/v1", "/invoice/(?P<invoice>\d+)", [
+		"methods"	=> "GET",
+		"callback"	=> function(WP_REST_Request $req){
+			global $wpdb;
+			$current = $wpdb->get_results("SELECT time FROM wp_track_time WHERE invoice = '{$req['invoice']}'", ARRAY_N);
+			$array = json_decode($current[0][0], true);
+			return [
+				"invoice" => $array,
+			];
+		}
+	]);
 	register_rest_route("track-time/v1", "/invoice", [
-		[
-			"methods"	=> "GET",
-			// "callback"	=> function(WP_REST_Request $request){
-			"callback"	=> function(){
-				global $wpdb;
-
-				// $invoice_number = sanitize_text_field($request->get_param('invoice_number'));
-				// $time_data	= $request->get_param('time');
-
-				// if(empty($invoice_number) || !is_array($time_data)){
-				// 	return ['error'=>'invalid paramaters'];
-				// }
-
-				$current = $wpdb->get_results("SELECT time FROM wp_track_time WHERE invoice = '50605'", ARRAY_N);
-
-				// $query = $wpdb->prepare(
-				// 	"UPDATE wp_track_time
-				// 	SET count = count + 1
-				// 	WHERE id = 1
-				// ");
-				// $wpdb->query($query);
-
-				// return ['success'=>'this is the api eh'];
-				return $current;
-			}
-		],
 		[
 			'methods'	=> "POST",
 			'callback'	=> function(WP_REST_Request $req){
 				global $wpdb;
-				$current = $wpdb->get_results("SELECT time FROM wp_track_time WHERE invoice = '50605'", ARRAY_N);
-				$json = json_decode($current[0][0], true);
+				$invoice = $req->get_param('invoice');
+				$current = $wpdb->get_results("SELECT time FROM wp_track_time WHERE invoice = '{$invoice}'", ARRAY_N);
+				$array = json_decode($current[0][0], true);
 
-				// $array = ["employee"=>"Jorge", "time"=>"6"];
-				// $update = json_encode($array);
+				$whois = $req->get_param('whois');
+				$manTime = $req->get_param('manTime');
+				$start = $req->get_param('start');
+				$array[$whois][$start]["time"] += $manTime ? $manTime : $req->get_param('time');
+				$update = json_encode($array);
 
-				// $query = $wpdb->prepare("UPDATE wp_track_time SET time = '{$update}' WHERE invoice = '50605'");
-				// $wpdb->query($query);
+				if($current){
+					$query = $wpdb->prepare("UPDATE wp_track_time SET time = '{$update}' WHERE invoice = '{$invoice}'");
+					$wpdb->query($query);
+				}else{
+					$query = $wpdb->prepare("INSERT INTO wp_track_time (invoice, time) VALUES ('{$invoice}', '{$update}')");
+					$wpdb->query($query);
+				}
 
+				$res = $manTime ? 'true' : 'false';
 				return [
 					'success'		=> false,
+					'invoice'		=> $req->get_param('invoice'),
+					'start'			=> $req->get_param('start'),
 					'time'			=> $req->get_param('time'),
-					'data'			=> $json['time'] + 8.2,
+					'manTime'		=> $req->get_param('manTime'),
+					'whois'			=> $req->get_param('whois'),
+					'data'			=> $update,
 				];
 			},
 			'permission_callback'	=> function(){
@@ -86,24 +85,27 @@ add_action('admin_menu', function(){
 				<script>
 					const emailForm = document.getElementById('email_porch_hosts_form')
 					const timeList = document.getElementById('time_list')
+					const search = document.getElementById('invoice_number')
 					emailForm.addEventListener('submit', (e)=>{
 						e.preventDefault()
 						while(timeList.firstChild){
 							timeList.removeChild(timeList.lastChild)
 						}
-						// const subject = document.getElementById('email_subject').value
-						// const body = document.getElementById('email_body').value.replace(/\n/g, "<br />");
-						fetch('<?=get_rest_url(null, '/track-time/v1/invoice')?>', {
-							method: 'GET'
+						fetch(`<?=get_rest_url()?>track-time/v1/invoice/${search.value}`, {
+							method: 'GET',
 						})
 						.then(res=>res.json())
 						.then(data=>{
-							const parsed = JSON.parse(data[0])
-							console.log(parsed)
+							console.log(data)
 							const list = document.createElement('ul')
-							const item = document.createElement('li')
-							item.innerText = `${parsed[0].employee}: ${parsed[0].time}`
-							list.appendChild(item)
+							for(const i of Object.keys(data.invoice)){
+								for(const x of Object.keys(data.invoice[i])){
+									console.log(i, ':', data.invoice[i][x])
+									const item = document.createElement('li')
+									item.innerText = `${i}: ${data.invoice[i][x].time}`
+									list.appendChild(item)
+								}
+							}
 							timeList.appendChild(list)
 						})
 					})
