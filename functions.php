@@ -36,6 +36,7 @@ add_action("rest_api_init", function(){
 				$manTime = $req->get_param('manTime');
 				$start = $req->get_param('start');
 				$array[$whois][$start]["time"] += $manTime ? $manTime : $req->get_param('time');
+				$array[$whois][$start]["notes"] = $req->get_param('notes');
 				$update = json_encode($array);
 
 				if($current){
@@ -101,8 +102,24 @@ add_action('admin_menu', function(){
 							for(const i of Object.keys(data.invoice)){
 								for(const x of Object.keys(data.invoice[i])){
 									console.log(i, ':', data.invoice[i][x])
+									const date = new Date(x)
 									const item = document.createElement('li')
-									item.innerText = `${i}: ${data.invoice[i][x].time}`
+									const dateElement = document.createElement('h3')
+									dateElement.innerText = date.toLocaleString()
+									item.appendChild(dateElement)
+									const emp = document.createElement('p')
+									emp.innerText = `Employee: ${i}`
+									item.appendChild(emp)
+									const time = document.createElement('p')
+									time.innerText = `Time: ${data.invoice[i][x].time}`
+									const notesData = data.invoice[i][x].notes
+									if(notesData){
+										const notes = document.createElement('p')
+										notes.innerText = notesData
+										item.appendChild(notes)
+									}
+									// item.innerText = `${i}: ${data.invoice[i][x].time} Notes: ${notes ? notes : ''} Date: ${x}`
+									item.appendChild(time)
 									list.appendChild(item)
 								}
 							}

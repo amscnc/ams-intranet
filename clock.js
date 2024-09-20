@@ -49,12 +49,21 @@ function popClocks(){
                     const time = document.createElement('p')
                     time.innerText = `Hours: ${hours}`
                     div.appendChild(time)
+                    const notesL = document.createElement('p')
+                    notesL.innerText = "Notes:"
+                    div.appendChild(notesL)
+                    const notes = document.createElement('input')
+                    notes.type = "text"
+                    div.appendChild(notes)
+                    const timeL = document.createElement('p')
+                    timeL.innerText = "Manual Time:"
+                    div.appendChild(timeL)
                     const manualTime = document.createElement('input')
                     manualTime.type = "number"
                     div.appendChild(manualTime)
                     const clockOutBtn = document.createElement('button')
                     clockOutBtn.innerText = "Clock Out"
-                    clockOutBtn.addEventListener('click', ()=>clockOut(key, manualTime.value))
+                    clockOutBtn.addEventListener('click', ()=>clockOut(key, manualTime.value, notes.value))
                     const cancelBtn = document.createElement('button')
                     cancelBtn.innerText = "Cancel"
                     cancelBtn.addEventListener('click', ()=>deleteClock(key))
@@ -115,7 +124,7 @@ function clockIn(inNumber){
     popClocks()
 }
 
-function clockOut(inNumber, manTime){
+function clockOut(inNumber, manTime, notes){
     const jobs = JSON.parse(localStorage.getItem('track-time'))
     console.log(manTime)
 
@@ -138,11 +147,13 @@ function clockOut(inNumber, manTime){
             manTime,
             start: first,
             invoice: inNumber,
+            notes,
             whois
         }),
 	})
 	.then(res=>res.json())
 	.then(obj=>{
-        console.log(obj.suc)
+        console.log(obj)
+        deleteClock(inNumber)
     })
 }
