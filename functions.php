@@ -118,7 +118,6 @@ add_action('admin_menu', function(){
 										notes.innerText = notesData
 										item.appendChild(notes)
 									}
-									// item.innerText = `${i}: ${data.invoice[i][x].time} Notes: ${notes ? notes : ''} Date: ${x}`
 									item.appendChild(time)
 									list.appendChild(item)
 								}
