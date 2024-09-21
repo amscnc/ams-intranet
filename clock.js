@@ -137,8 +137,8 @@ function clockOut(inNumber, manTime, notes){
     console.log(hours)
 
     fetch(`${wpVars.restURL}track-time/v1/invoice`,{
-            method: 'POST',
-            headers: {
+        method: 'POST',
+        headers: {
             'Content-Type': 'application/json',
             'X-WP-Nonce': wpVars.wpNonce,
         },

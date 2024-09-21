@@ -65,6 +65,42 @@ add_action("rest_api_init", function(){
 				}
 			}
 		],
+		[
+			'methods'	=> "UPDATE",
+			'callback'	=> function(WP_REST_Request $req){
+				// global $wpdb;
+				// $invoice = $req->get_param('invoice');
+				// $current = $wpdb->get_results("SELECT time FROM wp_track_time WHERE invoice = '{$invoice}'", ARRAY_N);
+				// $array = json_decode($current[0][0], true);
+
+				// $whois = $req->get_param('whois');
+				// $manTime = $req->get_param('manTime');
+				// $start = $req->get_param('start');
+				// $array[$whois][$start]["time"] += $manTime ? $manTime : $req->get_param('time');
+				// $array[$whois][$start]["notes"] = $req->get_param('notes');
+				// $update = json_encode($array);
+
+				// if($current){
+				// 	$query = $wpdb->prepare("UPDATE wp_track_time SET time = '{$update}' WHERE invoice = '{$invoice}'");
+				// 	$wpdb->query($query);
+				// }else{
+				// 	$query = $wpdb->prepare("INSERT INTO wp_track_time (invoice, time) VALUES ('{$invoice}', '{$update}')");
+				// 	$wpdb->query($query);
+				// }
+
+				// $res = $manTime ? 'true' : 'false';
+				return [
+					'invoice'		=> $req->get_param('invoice'),
+					'start'			=> $req->get_param('start'),
+				];
+			},
+			'permission_callback'	=> function(){
+				$nonce = sanitize_text_field($_SERVER['HTTP_X_WP_NONCE']);
+				if(wp_verify_nonce($nonce, 'wp_rest')){
+					return true;
+				}
+			}
+		],
 	]);
 });
 
@@ -119,12 +155,34 @@ add_action('admin_menu', function(){
 										item.appendChild(notes)
 									}
 									item.appendChild(time)
+									const deleteBtn = document.createElement('button')
+									deleteBtn.innerText = "Delete"
+									deleteBtn.addEventListener('click', ()=>deleteRecord(data.invoice, x))
+									item.appendChild(deleteBtn)
 									list.appendChild(item)
 								}
 							}
 							timeList.appendChild(list)
 						})
 					})
+
+					function deleteRecord(invoice, start){
+						fetch("<?=get_rest_url()?>track-time/v1/invoice",{
+							method: "UPDATE",
+							headers: {
+								'Content-Type': 'application/json',
+								'X-WP-Nonce': '<?=wp_create_nonce('wp_rest');?>',
+							},
+							body: JSON.stringify({
+								invoice,
+								start,
+							})
+						})
+						.then(res=>res.json())
+						.then(obj=>{
+							console.log(obj)
+						})
+					}
 				</script>
 			<?php
 		},
