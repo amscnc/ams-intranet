@@ -1,4 +1,3 @@
-const root          = document.getElementById('root')
 const search        = document.getElementById('search_form')
 const searchBox     = document.getElementById('search_box')
 const whoisdiv      = document.getElementById('who_is')
@@ -8,7 +7,6 @@ const clocked       = document.getElementById('clocked_into')
 const whois         = localStorage.getItem('whois')
 let clocksPopped    = false
 if(whois){
-    // checkOldJobs()
     whoisdiv.innerHTML = `<h1>Logged In As: ${whois}</h1>`
     const logout = document.createElement('button')
     logout.innerText = "Log Out"
@@ -19,18 +17,12 @@ if(whois){
     whoisdiv.appendChild(logout)
     popClocks()
 }
-setInterval(()=>{
-    if(clocksPopped){
-        popClocks()
-    }
-}, 36000)
 
 function popClocks(){
     while(clocked.firstChild){
         clocked.removeChild(clocked.lastChild)
     }
     const jobs = JSON.parse(localStorage.getItem('track-time'))
-    // console.log(jobs)
     if(jobs){
         const obj = jobs[Object.keys(jobs)[0]]
         const date = new Date()
@@ -90,7 +82,6 @@ search.addEventListener('submit', e=>{
 
 function deleteClock(inNumber){
     const jobs = JSON.parse(localStorage.getItem('track-time'))
-    // delete jobs[inNumber][stepNumber]
     if(Object.keys(jobs[inNumber]).keys.length == 0){
         delete jobs[inNumber]
     }

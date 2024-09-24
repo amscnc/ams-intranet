@@ -16,9 +16,6 @@
             <input type="submit" value="Clock In">
         </form>
     </div>
-    <div class="content">
-        <div id="root"></div>
-    </div>
     <div class="clocked-into" id="clocked_into"></div>
 </div>
 <?php get_footer();?>
