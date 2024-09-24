@@ -127,9 +127,9 @@ add_action("admin_menu", function(){
 							method: "GET",
 						})
 						.then(res=>res.json())
-						.then(data=>{
-							console.log(data)
-							popRecord(data)
+						.then(obj=>{
+							console.log(obj)
+							popRecord(obj)
 						})
 					})
 
