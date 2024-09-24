@@ -1,17 +1,17 @@
-const search        = document.getElementById('search_form')
-const searchBox     = document.getElementById('search_box')
-const whoisdiv      = document.getElementById('who_is')
-const whoisForm     = document.getElementById('whois_form')
-const whoisBox      = document.getElementById('emp_id')
-const clocked       = document.getElementById('clocked_into')
-const whois         = localStorage.getItem('whois')
+const search        = document.getElementById("search_form")
+const searchBox     = document.getElementById("search_box")
+const whoisdiv      = document.getElementById("who_is")
+const whoisForm     = document.getElementById("whois_form")
+const whoisBox      = document.getElementById("emp_id")
+const clocked       = document.getElementById("clocked_into")
+const whois         = localStorage.getItem("whois")
 let clocksPopped    = false
 if(whois){
     whoisdiv.innerHTML = `<h1>Logged In As: ${whois}</h1>`
-    const logout = document.createElement('button')
+    const logout = document.createElement("button")
     logout.innerText = "Log Out"
-    logout.addEventListener('click', ()=>{
-        localStorage.removeItem('whois')
+    logout.addEventListener("click", ()=>{
+        localStorage.removeItem("whois")
         location.reload()
     })
     whoisdiv.appendChild(logout)
@@ -22,13 +22,13 @@ function popClocks(){
     while(clocked.firstChild){
         clocked.removeChild(clocked.lastChild)
     }
-    const jobs = JSON.parse(localStorage.getItem('track-time'))
+    const jobs = JSON.parse(localStorage.getItem("track-time"))
     if(jobs){
         const obj = jobs[Object.keys(jobs)[0]]
         const date = new Date()
         for(const key of Object.keys(jobs)){
-            const div = document.createElement('div')
-            const job = document.createElement('h3')
+            const div = document.createElement("div")
+            const job = document.createElement("h3")
             job.innerText = key
             div.appendChild(job)
             for(const i of Object.keys(jobs[key])){
@@ -38,27 +38,27 @@ function popClocks(){
                     diff /= 1000
                     const seconds = Math.round(diff)
                     const hours = Math.round(((seconds / 60) / 60) * 100) / 100
-                    const time = document.createElement('p')
+                    const time = document.createElement("p")
                     time.innerText = `Hours: ${hours}`
                     div.appendChild(time)
-                    const notesL = document.createElement('p')
+                    const notesL = document.createElement("p")
                     notesL.innerText = "Notes:"
                     div.appendChild(notesL)
-                    const notes = document.createElement('input')
+                    const notes = document.createElement("input")
                     notes.type = "text"
                     div.appendChild(notes)
-                    const timeL = document.createElement('p')
+                    const timeL = document.createElement("p")
                     timeL.innerText = "Manual Time:"
                     div.appendChild(timeL)
-                    const manualTime = document.createElement('input')
+                    const manualTime = document.createElement("input")
                     manualTime.type = "number"
                     div.appendChild(manualTime)
-                    const clockOutBtn = document.createElement('button')
+                    const clockOutBtn = document.createElement("button")
                     clockOutBtn.innerText = "Clock Out"
-                    clockOutBtn.addEventListener('click', ()=>clockOut(key, manualTime.value, notes.value))
-                    const cancelBtn = document.createElement('button')
+                    clockOutBtn.addEventListener("click", ()=>clockOut(key, manualTime.value, notes.value))
+                    const cancelBtn = document.createElement("button")
                     cancelBtn.innerText = "Cancel"
-                    cancelBtn.addEventListener('click', ()=>deleteClock(key))
+                    cancelBtn.addEventListener("click", ()=>deleteClock(key))
                     div.appendChild(clockOutBtn)
                     div.appendChild(cancelBtn)
                     clocked.appendChild(div)
@@ -69,28 +69,28 @@ function popClocks(){
     clocksPopped = true
 }
 
-whoisForm.addEventListener('submit', e=>{
+whoisForm.addEventListener("submit", e=>{
     e.preventDefault()
-    localStorage.setItem('whois', whoisBox.value)
+    localStorage.setItem("whois", whoisBox.value)
     location.reload()
 })
 
-search.addEventListener('submit', e=>{
+search.addEventListener("submit", e=>{
     e.preventDefault()
     clockIn(searchBox.value)
 })
 
 function deleteClock(inNumber){
-    const jobs = JSON.parse(localStorage.getItem('track-time'))
+    const jobs = JSON.parse(localStorage.getItem("track-time"))
     if(Object.keys(jobs[inNumber]).keys.length == 0){
         delete jobs[inNumber]
     }
-    localStorage.setItem('track-time', JSON.stringify(jobs))
+    localStorage.setItem("track-time", JSON.stringify(jobs))
     popClocks()
 }
 
 function clockIn(inNumber){
-    let tracker = JSON.parse(localStorage.getItem('track-time'))
+    let tracker = JSON.parse(localStorage.getItem("track-time"))
     const date = new Date()
     if(tracker == null){
         tracker = {}
@@ -98,7 +98,7 @@ function clockIn(inNumber){
         tracker[inNumber][whois] = {
             timeStart: date,
         }
-        localStorage.setItem('track-time', JSON.stringify(tracker))
+        localStorage.setItem("track-time", JSON.stringify(tracker))
     }else{
         if(!tracker[inNumber]){
             tracker[inNumber] = {}
@@ -110,13 +110,13 @@ function clockIn(inNumber){
                 timeStart: date,
             }
         }
-        localStorage.setItem('track-time', JSON.stringify(tracker))
+        localStorage.setItem("track-time", JSON.stringify(tracker))
     }
     popClocks()
 }
 
 function clockOut(inNumber, manTime, notes){
-    const jobs = JSON.parse(localStorage.getItem('track-time'))
+    const jobs = JSON.parse(localStorage.getItem("track-time"))
     console.log(manTime)
 
     const first = new Date(jobs[inNumber][whois].timeStart)
@@ -128,10 +128,10 @@ function clockOut(inNumber, manTime, notes){
     console.log(hours)
 
     fetch(`${wpVars.restURL}track-time/v1/invoice`,{
-        method: 'POST',
+        method: "POST",
         headers: {
-            'Content-Type': 'application/json',
-            'X-WP-Nonce': wpVars.wpNonce,
+            "Content-Type": "application/json",
+            "X-WP-Nonce": wpVars.wpNonce,
         },
         body: JSON.stringify({
             time: hours,
