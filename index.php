@@ -16,6 +16,6 @@
             <input type="submit" value="Clock In">
         </form>
     </div>
-    <div class="clocked-into" id="clocked_into"></div>
+    <div class="jobs" id="clocked_into"></div>
 </div>
 <?php get_footer();?>

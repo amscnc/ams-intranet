@@ -24,7 +24,6 @@ function popClocks(){
     }
     const jobs = JSON.parse(localStorage.getItem("track-time"))
     if(jobs){
-        const obj = jobs[Object.keys(jobs)[0]]
         const date = new Date()
         for(const key of Object.keys(jobs)){
             const div = document.createElement("div")

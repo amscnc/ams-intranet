@@ -109,7 +109,31 @@ add_action("admin_menu", function(){
 		"time-tracking",
 		function(){
 			?>
-				<form id="email_porch_hosts_form" style="display:flex;flex-direction:column;padding:1rem;padding-right:2rem;">
+				<style>
+					form{
+						display: flex;
+						gap: 10px;
+						width: 50rem;
+						margin-top: 1rem;
+						label{
+							align-self: center;
+							font-size: 2rem;
+						}
+						input{
+							width: 20rem;
+							font-size: 2rem;
+
+						}
+						button{
+							font-size: 2rem;
+							background-color: green;
+							color: white;
+							padding: .5rem;
+							width: 10rem;
+						}
+					}
+				</style>
+				<form id="email_porch_hosts_form">
 					<label for="Invoice Lookup">Invoice Lookup</label>
 					<input type="text" name="Invoice Lookup" id="invoice_number">
 					<button type="submit">Get</button>

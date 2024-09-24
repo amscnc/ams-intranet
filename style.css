@@ -6,29 +6,50 @@ Author URI: funcychaos.com
 Description: 
 */
 
+*{
+    margin: 0;
+}
+
 .main{
     display: grid;
-    grid-template-columns: 5fr 2fr;
+    grid-template-columns: 5fr;
     grid-template-rows: 150px auto auto;
     grid-template-areas: 
-        "header jobs"
-        "search jobs"
-        "search jobs"
+        "header"
+        "search"
+        "jobs"
     ;
 
     .header{
         grid-area: header;
+        border-bottom: solid black 2px;
+        padding: 1rem;
+        .whois{
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            button{
+                width: 10rem;
+                font-size: 1.5rem;
+            }
+        }
     }
 
     .search{
         grid-area: search;
         display: flex;
-        margin-top: 2rem;
+        justify-content: center;
+        margin-top: 1rem;
         #search_form{
             width: 50%;
             display: flex;
             flex-direction: column;
             gap: 1rem;
+        }
+        input[type="text"]{
+            text-align: center;
+            font-size: 1.5rem;
+            border-radius: .4rem;
         }
         input[type="submit"]{
             height: 3rem;
@@ -49,11 +70,13 @@ Description:
             margin-bottom: 2rem;
         }
     }
-    .clocked-into{
+    .jobs{
         grid-area: jobs;
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        margin-top: 1rem;
+        padding: 1rem;
         div{
             display: flex;
             flex-direction: column;
