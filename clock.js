@@ -33,35 +33,35 @@ function popClocks(){
             div.appendChild(job)
             for(const i of Object.keys(jobs[key])){
                 if(whois == i){
-                    const first = new Date(jobs[key][i].timeStart)
-                    let diff = date - first
-                    diff /= 1000
-                    const seconds = Math.round(diff)
-                    const hours = Math.round(((seconds / 60) / 60) * 100) / 100
-                    const time = document.createElement("p")
-                    time.innerText = `Hours: ${hours}`
+                    const first             = new Date(jobs[key][i].timeStart)
+                    let diff                = date - first
+                    diff                    /= 1000
+                    const seconds           = Math.round(diff)
+                    const hours             = Math.round(((seconds / 60) / 60) * 100) / 100
+                    const time              = document.createElement("p")
+                    time.innerText          = `Hours: ${hours}`
                     div.appendChild(time)
-                    const notesL = document.createElement("p")
-                    notesL.innerText = "Notes:"
+                    const notesL            = document.createElement("p")
+                    notesL.innerText        = "Notes:"
                     div.appendChild(notesL)
-                    const notes = document.createElement("input")
-                    notes.type = "text"
-                    workTypeText = jobs[key][i].workType
+                    const notes             = document.createElement("input")
+                    notes.type              = "text"
+                    workTypeText            = jobs[key][i].workType
                     if(workTypeText){
-                     notes.value = workTypeText
+                        notes.value         = workTypeText
                     }
                     div.appendChild(notes)
-                    const timeL = document.createElement("p")
-                    timeL.innerText = "Manual Time:"
+                    const timeL             = document.createElement("p")
+                    timeL.innerText         = "Manual Time:"
                     div.appendChild(timeL)
-                    const manualTime = document.createElement("input")
-                    manualTime.type = "number"
+                    const manualTime        = document.createElement("input")
+                    manualTime.type         = "number"
                     div.appendChild(manualTime)
-                    const clockOutBtn = document.createElement("button")
-                    clockOutBtn.innerText = "Clock Out"
+                    const clockOutBtn       = document.createElement("button")
+                    clockOutBtn.innerText   = "Clock Out"
                     clockOutBtn.addEventListener("click", ()=>clockOut(key, manualTime.value, notes.value))
-                    const cancelBtn = document.createElement("button")
-                    cancelBtn.innerText = "Cancel"
+                    const cancelBtn         = document.createElement("button")
+                    cancelBtn.innerText     = "Cancel"
                     cancelBtn.addEventListener("click", ()=>deleteClock(key))
                     div.appendChild(clockOutBtn)
                     div.appendChild(cancelBtn)
