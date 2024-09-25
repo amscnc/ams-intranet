@@ -19,13 +19,22 @@ if(whois){
     popClocks()
 }
 
+function updateTime(key, i, jobs){
+    const date              = new Date()
+    const first             = new Date(jobs[key][i].timeStart)
+    let diff                = date - first
+    diff                    /= 1000
+    const seconds           = Math.round(diff)
+    const hours             = Math.round(((seconds / 60) / 60) * 100) / 100
+    return hours
+}
+
 function popClocks(){
     while(clocked.firstChild){
         clocked.removeChild(clocked.lastChild)
     }
     const jobs = JSON.parse(localStorage.getItem("track-time"))
     if(jobs){
-        const date = new Date()
         for(const key of Object.keys(jobs)){
             const div = document.createElement("div")
             const job = document.createElement("h3")
@@ -33,14 +42,12 @@ function popClocks(){
             div.appendChild(job)
             for(const i of Object.keys(jobs[key])){
                 if(whois == i){
-                    const first             = new Date(jobs[key][i].timeStart)
-                    let diff                = date - first
-                    diff                    /= 1000
-                    const seconds           = Math.round(diff)
-                    const hours             = Math.round(((seconds / 60) / 60) * 100) / 100
                     const time              = document.createElement("p")
-                    time.innerText          = `Hours: ${hours}`
+                    time.innerText          = `Hours: ${updateTime(key, i, jobs)}`
                     div.appendChild(time)
+                    setInterval(()=>{
+                        time.innerText      = `Hours: ${updateTime(key, i, jobs)}`
+                    }, 36000);
                     const notesL            = document.createElement("p")
                     notesL.innerText        = "Notes:"
                     div.appendChild(notesL)
