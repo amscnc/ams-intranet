@@ -13,6 +13,13 @@
         <form id="search_form">
             <label for="search_box">Enter Invoice Number</label>
             <input type="text" name="search_box" id="search_box">
+            <select name="work_type" id="work_type">
+                <option disabled selected value>General</option>
+                <option value="block">Block</option>
+                <option value="crank">Crank</option>
+                <option value="head">Head</option>
+                <option value="rods">Rods</option>
+            </select>
             <input type="submit" value="Clock In">
         </form>
     </div>

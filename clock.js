@@ -1,5 +1,6 @@
 const search        = document.getElementById("search_form")
 const searchBox     = document.getElementById("search_box")
+const select        = document.getElementById("work_type")
 const whoisdiv      = document.getElementById("who_is")
 const whoisForm     = document.getElementById("whois_form")
 const whoisBox      = document.getElementById("emp_id")
@@ -45,6 +46,10 @@ function popClocks(){
                     div.appendChild(notesL)
                     const notes = document.createElement("input")
                     notes.type = "text"
+                    workTypeText = jobs[key][i].workType
+                    if(workTypeText){
+                     notes.value = workTypeText
+                    }
                     div.appendChild(notes)
                     const timeL = document.createElement("p")
                     timeL.innerText = "Manual Time:"
@@ -76,7 +81,7 @@ whoisForm.addEventListener("submit", e=>{
 
 search.addEventListener("submit", e=>{
     e.preventDefault()
-    clockIn(searchBox.value)
+    clockIn(searchBox.value, select.value)
 })
 
 function deleteClock(inNumber){
@@ -88,7 +93,7 @@ function deleteClock(inNumber){
     popClocks()
 }
 
-function clockIn(inNumber){
+function clockIn(inNumber, workType){
     let tracker = JSON.parse(localStorage.getItem("track-time"))
     const date = new Date()
     if(tracker == null){
@@ -96,6 +101,7 @@ function clockIn(inNumber){
         tracker[inNumber] = {}
         tracker[inNumber][whois] = {
             timeStart: date,
+            workType,
         }
         localStorage.setItem("track-time", JSON.stringify(tracker))
     }else{
@@ -103,10 +109,12 @@ function clockIn(inNumber){
             tracker[inNumber] = {}
             tracker[inNumber][whois] = {
                 timeStart: date,
+                workType,
             }
         }else{
             tracker[inNumber][whois] = {
                 timeStart: date,
+                workType,
             }
         }
         localStorage.setItem("track-time", JSON.stringify(tracker))
@@ -123,7 +131,7 @@ function clockOut(inNumber, manTime, notes){
     let diff = date - first
     diff /= 1000
     const seconds = Math.round(diff)
-    const hours = (seconds / 60) / 60
+    const hours = Math.round(((seconds / 60) / 60) * 100) / 100
     console.log(hours)
 
     fetch(`${wpVars.restURL}track-time/v1/invoice`,{
