@@ -12,14 +12,16 @@ add_action("wp_enqueue_scripts", function(){
 });
 
 add_action("rest_api_init", function(){
-	register_rest_route("track-time/v1", "/invoice/(?P<invoice>\d+)", [
+	register_rest_route("track-time/v1", "/invoice", [
 		"methods"	=> "GET",
 		"callback"	=> function(WP_REST_Request $req){
 			global $wpdb;
-			$current = $wpdb->get_results("SELECT time FROM wp_track_time WHERE invoice = '{$req['invoice']}'", ARRAY_N);
+			$invoice = $req->get_param('invoice');
+			$current = $wpdb->get_results("SELECT time FROM wp_track_time WHERE invoice = '{$invoice}'", ARRAY_N);
 			$array = json_decode($current[0][0], true);
 			return [
 				"invoice"	=> $array,
+				"number"	=> $invoice,
 			];
 		}
 	]);
@@ -147,7 +149,7 @@ add_action("admin_menu", function(){
 					emailForm.addEventListener('submit', (e)=>{
 						e.preventDefault()
 
-						fetch(`<?=get_rest_url()?>track-time/v1/invoice/${search.value}`, {
+						fetch(`<?=get_rest_url()?>track-time/v1/invoice?invoice=${search.value}`, {
 							method: "GET",
 						})
 						.then(res=>res.json())
