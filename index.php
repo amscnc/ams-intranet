@@ -14,9 +14,13 @@
             <label for="search_box">Enter Invoice Number</label>
             <input type="text" name="search_box" id="search_box">
             <select name="work_type" id="work_type">
-                <option disabled selected value>General</option>
+                <option selected value>General</option>
                 <option value="block">Block</option>
+                <option value="block bore">Block Bore</option>
+                <option value="block hone">Block Hone</option>
                 <option value="crank">Crank</option>
+                <option value="crank grind">Crank Grind</option>
+                <option value="crank polish">Crank Polish</option>
                 <option value="head">Head</option>
                 <option value="rods">Rods</option>
             </select>
