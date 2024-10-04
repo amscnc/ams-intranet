@@ -17,12 +17,13 @@ add_action("rest_api_init", function(){
 		"callback"	=> function(WP_REST_Request $req){
 			global $wpdb;
 			$invoice = $req->get_param('invoice');
-			$current = $wpdb->get_results("SELECT time FROM wp_track_time WHERE invoice = '{$invoice}'", ARRAY_N);
-			$array = json_decode($current[0][0], true);
+			$current = $wpdb->get_results("SELECT * FROM wp_track_time WHERE invoice = '{$invoice}'", ARRAY_N);
+			// $array = json_decode($current[0][0], true);
 			return [
-				"invoice"	=> $array,
-				"number"	=> $invoice,
-				"plain"		=> $current,
+				// "invoice"	=> $array,
+				// "number"	=> $invoice,
+				// "plain"		=> $current,
+				"response"	=> $current,
 			];
 		}
 	]);
@@ -66,28 +67,29 @@ add_action("rest_api_init", function(){
 				$current = $wpdb->get_results("SELECT time FROM wp_track_time WHERE invoice = '{$invoice}'", ARRAY_N);
 				$array = json_decode($current[0][0], true);
 
-				foreach($array as $key => $value){
-					if($key == $req->get_param("employee")){
-						$result[] = $key;
-						if(count($value) > 1){
-							foreach($value as $start => $time){
-								if($start == $req->get_param("start")){
-									$result[] = $start;
-									unset($array[$key][$start]);
-								}
-							}
-						}else{
-							unset($array[$key]);
-						}
-					}
-				}
-				$update = json_encode($array);
-				$query = $wpdb->prepare("UPDATE wp_track_time SET time = '{$update}' WHERE invoice = '{$invoice}'");
-				$success = $wpdb->query($query);
+				// foreach($array as $key => $value){
+				// 	if($key == $req->get_param("employee")){
+				// 		$result[] = $key;
+				// 		if(count($value) > 1){
+				// 			foreach($value as $start => $time){
+				// 				if($start == $req->get_param("start")){
+				// 					$result[] = $start;
+				// 					unset($array[$key][$start]);
+				// 				}
+				// 			}
+				// 		}else{
+				// 			unset($array[$key]);
+				// 		}
+				// 	}
+				// }
+				// $update = json_encode($array);
+				// $query = $wpdb->prepare("UPDATE wp_track_time SET time = '{$update}' WHERE invoice = '{$invoice}'");
+				// $success = $wpdb->query($query);
 
 				return [
-					"success"	=> $success,
-					"invoice"	=> $array,
+					// "success"	=> $success,
+					// "invoice"	=> $array,
+					"response"		=> "nothing right now"
 				];
 			},
 			"permission_callback"	=> function(){
@@ -132,7 +134,7 @@ add_action("admin_menu", function(){
 						}
 					}
 				</style>
-				<form id="email_porch_hosts_form">
+				<form id="invoice_lookup_form">
 					<label for="Invoice Lookup">Invoice Lookup</label>
 					<input type="text" name="Invoice Lookup" id="invoice_number">
 					<button type="submit">Get</button>
@@ -140,59 +142,61 @@ add_action("admin_menu", function(){
 				<div id="time_list">
 				</div>
 				<script>
-					const emailForm = document.getElementById("email_porch_hosts_form")
+					const invoiceForm = document.getElementById("invoice_lookup_form")
 					const timeList = document.getElementById("time_list")
 					const search = document.getElementById("invoice_number")
-					emailForm.addEventListener('submit', (e)=>{
+					invoiceForm.addEventListener('submit', (e)=>{
 						e.preventDefault()
 
 						fetch(`<?=get_rest_url()?>track-time/v1/invoice?invoice=${search.value}`, {
 							method: "GET",
 						})
 						.then(res=>res.json())
-						.then(obj=>{
-							console.log(obj)
-							popRecord(obj)
-						})
+						.then(obj=>popRecord(obj.response))
 					})
 
 					function popRecord(data){
 						while(timeList.firstChild){
 							timeList.removeChild(timeList.lastChild)
 						}
-						const list = document.createElement("ul")
-						for(const i of Object.keys(data.invoice)){
-							const item = document.createElement("li")
-							const emp = document.createElement("h3")
-							emp.innerText = `Employee: ${i}`
-							item.appendChild(emp)
-							const innerList = document.createElement("ul")
-							for(const x of Object.keys(data.invoice[i])){
-								const innerItem = document.createElement("li")
-								console.log(i, ":", data.invoice[i][x])
-								const date = new Date(x)
-								const dateElement = document.createElement("p")
-								dateElement.innerText = date.toLocaleString()
-								innerItem.appendChild(dateElement)
-								const time = document.createElement("p")
-								time.innerText = `Time: ${data.invoice[i][x].time}`
-								const notesData = data.invoice[i][x].notes
-								if(notesData){
-									const notes = document.createElement("p")
-									notes.innerText = notesData
-									innerItem.appendChild(notes)
+
+						let employees 		= [...new Set(data.map(entries => entries[3]))];
+						const employeeList 	= document.createElement("ul")
+						for(const employee of employees){
+							console.log("employee:", employee)
+							const employeeItem			= document.createElement("li")
+							const employeeHeader		= document.createElement("h3")
+							employeeHeader.innerText	= `Employee: ${employee}`
+							employeeItem.appendChild(employeeHeader)
+							const entryList 			= document.createElement("ul")
+							for(const entry of data){
+								if(entry[3] == employee){
+									const entryData = JSON.parse(entry[2])
+									const entryItem = document.createElement("li")
+									const date = new Date(entry[4])
+									const dateElement = document.createElement("p")
+									dateElement.innerText = date.toLocaleString()
+									entryItem.appendChild(dateElement)
+									const time = document.createElement("p")
+									time.innerText = `Time: ${entryData.time}`
+									entryItem.appendChild(time)
+									if(entryData.notes){
+										const notes = document.createElement("p")
+										notes.innerText = entryData.notes
+										entryItem.appendChild(notes)
+									}
+									
+									const deleteBtn = document.createElement("button")
+									deleteBtn.innerText = "Delete"
+									deleteBtn.addEventListener("click", ()=>deleteRecord(i, x))
+									entryItem.appendChild(deleteBtn)
+									entryList.appendChild(entryItem)
 								}
-								innerItem.appendChild(time)
-								const deleteBtn = document.createElement("button")
-								deleteBtn.innerText = "Delete"
-								deleteBtn.addEventListener("click", ()=>deleteRecord(i, x))
-								innerItem.appendChild(deleteBtn)
-								innerList.appendChild(innerItem)
 							}
-							item.appendChild(innerList)
-							list.appendChild(item)
+							employeeItem.appendChild(entryList)
+							employeeList.appendChild(employeeItem)
 						}
-						timeList.appendChild(list)
+						timeList.appendChild(employeeList)
 					}
 
 					function deleteRecord(employee, start){
