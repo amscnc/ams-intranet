@@ -56,11 +56,9 @@ add_menu_page(
 						while(timeList.firstChild){
 							timeList.removeChild(timeList.lastChild)
 						}
-
 						let employees 		= [...new Set(data.map(entries => entries[3]))];
 						const employeeList 	= document.createElement("ul")
 						for(const employee of employees){
-							console.log("employee:", employee)
 							const employeeItem			= document.createElement("li")
 							const employeeHeader		= document.createElement("h3")
 							employeeHeader.innerText	= `Employee: ${employee}`
