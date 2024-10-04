@@ -22,6 +22,7 @@ add_action("rest_api_init", function(){
 			return [
 				"invoice"	=> $array,
 				"number"	=> $invoice,
+				"plain"		=> $current,
 			];
 		}
 	]);
@@ -31,23 +32,19 @@ add_action("rest_api_init", function(){
 			"callback"	=> function(WP_REST_Request $req){
 				global $wpdb;
 				$invoice	= $req->get_param("invoice");
-				$current	= $wpdb->get_results("SELECT time FROM wp_track_time WHERE invoice = '{$invoice}'", ARRAY_N);
-				$array		= json_decode($current[0][0], true);
-
-				$whois		= $req->get_param("whois");
-				$manTime	= $req->get_param("manTime");
-				$start		= $req->get_param("start");
-				$array[$whois][$start]["time"] += $manTime ? $manTime : $req->get_param("time");
-				$array[$whois][$start]["notes"] = $req->get_param("notes");
-				$update		= json_encode($array);
-
-				if($current){
-					$query = $wpdb->prepare("UPDATE wp_track_time SET time = '{$update}' WHERE invoice = '{$invoice}'");
-					$success = $wpdb->query($query);
-				}else{
-					$query = $wpdb->prepare("INSERT INTO wp_track_time (invoice, time) VALUES ('{$invoice}', '{$update}')");
-					$success = $wpdb->query($query);
+				$whois				= $req->get_param("whois");
+				$manTime			= $req->get_param("manTime");
+				$start				= $req->get_param("start");
+				if(!is_numeric($start)){
+					$start = strtotime($start);
 				}
+				$array 				= [];
+				$array["time"]		= $manTime ? $manTime : $req->get_param("time");
+				$array["notes"]		= $req->get_param("notes");
+				$update				= json_encode($array);
+
+				$query		= $wpdb->prepare("INSERT INTO wp_track_time (invoice, time, employee, date) VALUES ('{$invoice}', '{$update}', {$whois}, FROM_UNIXTIME({$start}))");
+				$success 	= $wpdb->query($query);
 
 				return [
 					"success"	=> $success,
