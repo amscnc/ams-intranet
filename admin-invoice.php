@@ -44,14 +44,12 @@ add_menu_page(
 					const search = document.getElementById("invoice_number")
 					invoiceForm.addEventListener('submit', (e)=>{
 						e.preventDefault()
-
 						fetch(`<?=get_rest_url()?>track-time/v1/invoice?invoice=${search.value}`, {
 							method: "GET",
 						})
 						.then(res=>res.json())
 						.then(obj=>popRecord(obj.response))
 					})
-
 				</script>
 				<?php require get_template_directory()."/popRecord.php";?>
 			<?php

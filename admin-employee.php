@@ -47,7 +47,6 @@ add_submenu_page(
 					const when	= document.getElementById("date")
 					employeeForm.addEventListener("submit", e=>{
 						e.preventDefault()
-
 						fetch(`<?=get_rest_url()?>track-time/v1/employee?whois=${search.value}&date=${date.value}`, {
 							method: "GET",
 						})
