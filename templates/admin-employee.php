@@ -54,7 +54,7 @@ add_submenu_page(
 						.then(obj=>popRecord(obj.response, date.value))
 					})
 				</script>
-				<?php require get_template_directory()."/popRecord.php";?>
+				<?php require get_template_directory()."/templates/popRecord.php";?>
 			<?php
 		}
 	);

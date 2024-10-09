@@ -68,9 +68,9 @@ register_rest_route("track-time/v1", "/invoice", [
         "callback"	=> function(WP_REST_Request $req){
             global $wpdb;
 
-            $id			= $req->get_param("id");
-            $query		= $wpdb->prepare("DELETE FROM wp_track_time WHERE id = {$id}");
-            $success	= $wpdb->query($query);
+            $id			    = $req->get_param("id");
+            $query		    = $wpdb->prepare("DELETE FROM wp_track_time WHERE id = {$id}");
+            $success	    = $wpdb->query($query);
 
             $date           = $req->get_param("date");
             $result;
@@ -85,46 +85,6 @@ register_rest_route("track-time/v1", "/invoice", [
             return [
                 "success"	=> $success,
                 "response"	=> $result,
-            ];
-        },
-        "permission_callback"	=> function(){
-            $nonce = sanitize_text_field($_SERVER["HTTP_X_WP_NONCE"]);
-            if(wp_verify_nonce($nonce, "wp_rest")){
-                return true;
-            }
-        }
-    ],
-    [
-        "methods"	=> "UPDATE",
-        "callback"	=> function(WP_REST_Request $req){
-            global $wpdb;
-            $invoice = $req->get_param("invoice");
-            $current = $wpdb->get_results("SELECT time FROM wp_track_time WHERE invoice = '{$invoice}'", ARRAY_N);
-            $array = json_decode($current[0][0], true);
-
-            // foreach($array as $key => $value){
-            // 	if($key == $req->get_param("employee")){
-            // 		$result[] = $key;
-            // 		if(count($value) > 1){
-            // 			foreach($value as $start => $time){
-            // 				if($start == $req->get_param("start")){
-            // 					$result[] = $start;
-            // 					unset($array[$key][$start]);
-            // 				}
-            // 			}
-            // 		}else{
-            // 			unset($array[$key]);
-            // 		}
-            // 	}
-            // }
-            // $update = json_encode($array);
-            // $query = $wpdb->prepare("UPDATE wp_track_time SET time = '{$update}' WHERE invoice = '{$invoice}'");
-            // $success = $wpdb->query($query);
-
-            return [
-                // "success"	=> $success,
-                // "invoice"	=> $array,
-                "response"		=> "nothing right now"
             ];
         },
         "permission_callback"	=> function(){

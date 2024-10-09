@@ -51,7 +51,7 @@ add_menu_page(
 						.then(obj=>popRecord(obj.response))
 					})
 				</script>
-				<?php require get_template_directory()."/popRecord.php";?>
+				<?php require get_template_directory()."/templates/popRecord.php";?>
 			<?php
 		},
 		"dashicons-admin-tools",
