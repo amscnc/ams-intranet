@@ -129,18 +129,19 @@ function clockIn(inNumber, workType){
     popClocks()
 }
 
-function clockOut(inNumber, manTime, notes){
+function clockOut(invoice, manTime, notes){
     const jobs = JSON.parse(localStorage.getItem("track-time"))
-    console.log(manTime)
 
-    const first = new Date(jobs[inNumber][whois].timeStart)
-    const date = new Date()
-    let diff = date - first
-    diff /= 1000
-    const seconds = Math.round(diff)
-    const hours = Math.round(((seconds / 60) / 60) * 100) / 100
-    console.log(hours)
+    const timeStart     = new Date(jobs[invoice][whois].timeStart)
+    const start         = Math.floor(timeStart.getTime() / 1000)
 
+    const date          = new Date()
+    let diff            = date - start
+    diff                /= 1000
+    const seconds       = Math.round(diff)
+    const time          = Math.round(((seconds / 60) / 60) * 100) / 100
+    
+    console.log(start)
     fetch(`${wpVars.restURL}track-time/v1/invoice`,{
         method: "POST",
         headers: {
@@ -148,10 +149,10 @@ function clockOut(inNumber, manTime, notes){
             "X-WP-Nonce": wpVars.wpNonce,
         },
         body: JSON.stringify({
-            time: hours,
+            time,
             manTime,
-            start: first,
-            invoice: inNumber,
+            start,
+            invoice,
             notes,
             whois
         }),
@@ -159,6 +160,6 @@ function clockOut(inNumber, manTime, notes){
 	.then(res=>res.json())
 	.then(obj=>{
         console.log(obj)
-        deleteClock(inNumber)
+        deleteClock(invoice)
     })
 }
