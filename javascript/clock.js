@@ -93,9 +93,7 @@ search.addEventListener("submit", e=>{
 
 function deleteClock(inNumber){
     const jobs = JSON.parse(localStorage.getItem("track-time"))
-    if(Object.keys(jobs[inNumber]).keys.length == 0){
-        delete jobs[inNumber]
-    }
+    delete jobs[inNumber][whois]
     localStorage.setItem("track-time", JSON.stringify(jobs))
     popClocks()
 }
@@ -140,8 +138,7 @@ function clockOut(invoice, manTime, notes){
     diff                /= 1000
     const seconds       = Math.round(diff)
     const time          = Math.round(((seconds / 60) / 60) * 100) / 100
-    
-    console.log(start)
+
     fetch(`${wpVars.restURL}track-time/v1/invoice`,{
         method: "POST",
         headers: {
@@ -160,6 +157,6 @@ function clockOut(invoice, manTime, notes){
 	.then(res=>res.json())
 	.then(obj=>{
         console.log(obj)
-        deleteClock(invoice)
+        deleteClock(invoice, whois)
     })
 }
