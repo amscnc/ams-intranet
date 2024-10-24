@@ -8,9 +8,9 @@ const clocked       = document.getElementById("clocked_into")
 const whois         = localStorage.getItem("whois")
 let clocksPopped    = false
 if(whois){
-    whoisdiv.innerHTML = `<h1>Logged In As: ${whois}</h1>`
-    const logout = document.createElement("button")
-    logout.innerText = "Log Out"
+    whoisdiv.innerHTML  = `<h1>Logged In As: ${whois}</h1>`
+    const logout        = document.createElement("button")
+    logout.innerText    = "Log Out"
     logout.addEventListener("click", ()=>{
         localStorage.removeItem("whois")
         location.reload()
@@ -20,12 +20,12 @@ if(whois){
 }
 
 function updateTime(key, i, jobs){
-    const date              = new Date()
-    const first             = new Date(jobs[key][i].timeStart)
-    let diff                = date - first
-    diff                    /= 1000
-    const seconds           = Math.round(diff)
-    const hours             = Math.round(((seconds / 60) / 60) * 100) / 100
+    const date      = new Date()
+    const first     = new Date(jobs[key][i].timeStart)
+    let diff        = date - first
+    diff            /= 1000
+    const seconds   = Math.round(diff)
+    const hours     = Math.round(((seconds / 60) / 60) * 100) / 100
     return hours
 }
 
@@ -99,11 +99,11 @@ function deleteClock(inNumber){
 }
 
 function clockIn(inNumber, workType){
-    let tracker = JSON.parse(localStorage.getItem("track-time"))
-    const date = new Date()
+    let tracker     = JSON.parse(localStorage.getItem("track-time"))
+    const date      = new Date()
     if(tracker == null){
-        tracker = {}
-        tracker[inNumber] = {}
+        tracker             = {}
+        tracker[inNumber]   = {}
         tracker[inNumber][whois] = {
             timeStart: date,
             workType,
@@ -134,7 +134,7 @@ function clockOut(invoice, manTime, notes){
     const start         = Math.floor(timeStart.getTime() / 1000)
 
     const date          = new Date()
-    let diff            = date - start
+    let diff            = date - timeStart
     diff                /= 1000
     const seconds       = Math.round(diff)
     const time          = Math.round(((seconds / 60) / 60) * 100) / 100
@@ -157,6 +157,6 @@ function clockOut(invoice, manTime, notes){
 	.then(res=>res.json())
 	.then(obj=>{
         console.log(obj)
-        deleteClock(invoice, whois)
+        deleteClock(invoice)
     })
 }
