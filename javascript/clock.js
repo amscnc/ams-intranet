@@ -6,7 +6,6 @@ const whoisForm     = document.getElementById("whois_form")
 const whoisBox      = document.getElementById("emp_id")
 const clocked       = document.getElementById("clocked_into")
 const whois         = localStorage.getItem("whois")
-let clocksPopped    = false
 if(whois){
     whoisdiv.innerHTML  = `<h1>Logged In As: ${whois}</h1>`
     const logout        = document.createElement("button")
@@ -36,48 +35,48 @@ function popClocks(){
     const jobs = JSON.parse(localStorage.getItem("track-time"))
     if(jobs){
         for(const key of Object.keys(jobs)){
-            const div = document.createElement("div")
-            const job = document.createElement("h3")
-            job.innerText = key
-            div.appendChild(job)
+            const jobDiv = document.createElement("div")
+            jobDiv.classList.add("Job")
+            const jobHeader = document.createElement("h3")
+            jobHeader.innerText = key
+            jobDiv.appendChild(jobHeader)
             for(const i of Object.keys(jobs[key])){
                 if(whois == i){
                     const time              = document.createElement("p")
                     time.innerText          = `Hours: ${updateTime(key, i, jobs)}`
-                    div.appendChild(time)
+                    jobDiv.appendChild(time)
                     setInterval(()=>{
                         time.innerText      = `Hours: ${updateTime(key, i, jobs)}`
                     }, 36000);
-                    const notesL            = document.createElement("p")
-                    notesL.innerText        = "Notes:"
-                    div.appendChild(notesL)
-                    const notes             = document.createElement("input")
-                    notes.type              = "text"
-                    workTypeText            = jobs[key][i].workType
-                    if(workTypeText){
-                        notes.value         = workTypeText
+                    const notesLabel        = document.createElement("p")
+                    notesLabel.innerText    = "Notes:"
+                    jobDiv.appendChild(notesLabel)
+                    const notesInput        = document.createElement("input")
+                    notesInput.type         = "text"
+                    workType            = jobs[key][i].workType
+                    if(workType){
+                        notesInput.value    = workType
                     }
-                    div.appendChild(notes)
-                    const timeL             = document.createElement("p")
-                    timeL.innerText         = "Manual Time:"
-                    div.appendChild(timeL)
+                    jobDiv.appendChild(notesInput)
+                    const timeLabel             = document.createElement("p")
+                    timeLabel.innerText         = "Manual Time:"
+                    jobDiv.appendChild(timeLabel)
                     const manualTime        = document.createElement("input")
                     manualTime.type         = "number"
-                    div.appendChild(manualTime)
+                    jobDiv.appendChild(manualTime)
                     const clockOutBtn       = document.createElement("button")
                     clockOutBtn.innerText   = "Clock Out"
                     clockOutBtn.addEventListener("click", ()=>clockOut(key, manualTime.value, notes.value))
                     const cancelBtn         = document.createElement("button")
                     cancelBtn.innerText     = "Cancel"
                     cancelBtn.addEventListener("click", ()=>deleteClock(key))
-                    div.appendChild(clockOutBtn)
-                    div.appendChild(cancelBtn)
-                    clocked.appendChild(div)
+                    jobDiv.appendChild(clockOutBtn)
+                    jobDiv.appendChild(cancelBtn)
+                    clocked.appendChild(jobDiv)
                 }
             }
         }
     }
-    clocksPopped = true
 }
 
 whoisForm.addEventListener("submit", e=>{
