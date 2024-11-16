@@ -44,10 +44,10 @@ register_rest_route("track-time/v1", "/invoice", [
             if(!is_numeric($start)){
                 $start 			= strtotime($start);
             }
-            $trackArr 			= [];
-            $trackArr["time"]	= $manTime ? $manTime : $req->get_param("time");
-            $trackArr["notes"]	= $req->get_param("notes");
-            $trackObj			= json_encode($trackArr);
+            $timeArr 			= [];
+            $timeArr["time"]	= $manTime ? $manTime : $req->get_param("time");
+            $timeArr["notes"]	= $req->get_param("notes");
+            $timeObj			= json_encode($timeArr);
 
             $query				= $wpdb->prepare("INSERT INTO wp_track_time (invoice, time, employee, date) VALUES ('{$invoice}', '{$trackObj}', {$whois}, FROM_UNIXTIME({$start}))");
             $success 			= $wpdb->query($query);

@@ -16,7 +16,7 @@ Description:
     grid-template-rows: 150px auto auto;
     grid-template-areas: 
         "header"
-        "search"
+        "clock"
         "jobs"
     ;
 
@@ -35,12 +35,12 @@ Description:
         }
     }
 
-    .search{
-        grid-area: search;
+    .clock{
+        grid-area: clock;
         display: flex;
         justify-content: center;
         margin-top: 1rem;
-        #search_form{
+        #clock_form{
             width: 50%;
             display: flex;
             flex-direction: column;

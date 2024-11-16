@@ -1,11 +1,12 @@
-const search        = document.getElementById("search_form")
-const searchBox     = document.getElementById("search_box")
-const select        = document.getElementById("work_type")
-const whoisdiv      = document.getElementById("who_is")
-const whoisForm     = document.getElementById("whois_form")
-const whoisBox      = document.getElementById("emp_id")
-const clocked       = document.getElementById("clocked_into")
-const whois         = localStorage.getItem("whois")
+const clockForm         = document.getElementById("clock_form")
+const invoiceInput      = document.getElementById("invoice_box")
+const workTypeSelect    = document.getElementById("work_type")
+const whoisdiv          = document.getElementById("who_is")
+const whoisForm         = document.getElementById("whois_form")
+const whoisInput        = document.getElementById("emp_id")
+const clockedInto       = document.getElementById("clocked_into")
+const whois             = localStorage.getItem("whois")
+
 if(whois){
     whoisdiv.innerHTML  = `<h1>Logged In As: ${whois}</h1>`
     const logout        = document.createElement("button")
@@ -19,18 +20,18 @@ if(whois){
 }
 
 function updateTime(key, i, jobs){
-    const date      = new Date()
-    const first     = new Date(jobs[key][i].timeStart)
-    let diff        = date - first
-    diff            /= 1000
-    const seconds   = Math.round(diff)
-    const hours     = Math.round(((seconds / 60) / 60) * 100) / 100
+    const date          = new Date()
+    const first         = new Date(jobs[key][i].timeStart)
+    let diff            = date - first
+    diff                /= 1000
+    const seconds       = Math.round(diff)
+    const hours         = Math.round(((seconds / 60) / 60) * 100) / 100
     return hours
 }
 
 function popClocks(){
-    while(clocked.firstChild){
-        clocked.removeChild(clocked.lastChild)
+    while(clockedInto.firstChild){
+        clockedInto.removeChild(clockedInto.lastChild)
     }
     const jobs = JSON.parse(localStorage.getItem("track-time"))
     if(jobs){
@@ -66,13 +67,13 @@ function popClocks(){
                     jobDiv.appendChild(manualTime)
                     const clockOutBtn       = document.createElement("button")
                     clockOutBtn.innerText   = "Clock Out"
-                    clockOutBtn.addEventListener("click", ()=>clockOut(key, manualTime.value, notes.value))
+                    clockOutBtn.addEventListener("click", ()=>clockOut(key, manualTime.value, notesInput.value))
                     const cancelBtn         = document.createElement("button")
                     cancelBtn.innerText     = "Cancel"
                     cancelBtn.addEventListener("click", ()=>deleteClock(key))
                     jobDiv.appendChild(clockOutBtn)
                     jobDiv.appendChild(cancelBtn)
-                    clocked.appendChild(jobDiv)
+                    clockedInto.appendChild(jobDiv)
                 }
             }
         }
@@ -85,38 +86,38 @@ whoisForm.addEventListener("submit", e=>{
     location.reload()
 })
 
-search.addEventListener("submit", e=>{
+clockForm.addEventListener("submit", e=>{
     e.preventDefault()
-    clockIn(searchBox.value, select.value)
+    clockIn(invoiceInput.value, workTypeSelect.value)
 })
 
-function deleteClock(inNumber){
+function deleteClock(invoice){
     const jobs = JSON.parse(localStorage.getItem("track-time"))
-    delete jobs[inNumber][whois]
+    delete jobs[invoice][whois]
     localStorage.setItem("track-time", JSON.stringify(jobs))
     popClocks()
 }
 
-function clockIn(inNumber, workType){
+function clockIn(invoice, workType){
     let tracker     = JSON.parse(localStorage.getItem("track-time"))
     const date      = new Date()
     if(tracker == null){
         tracker             = {}
-        tracker[inNumber]   = {}
-        tracker[inNumber][whois] = {
+        tracker[invoice]   = {}
+        tracker[invoice][whois] = {
             timeStart: date,
             workType,
         }
         localStorage.setItem("track-time", JSON.stringify(tracker))
     }else{
-        if(!tracker[inNumber]){
-            tracker[inNumber] = {}
-            tracker[inNumber][whois] = {
+        if(!tracker[invoice]){
+            tracker[invoice] = {}
+            tracker[invoice][whois] = {
                 timeStart: date,
                 workType,
             }
         }else{
-            tracker[inNumber][whois] = {
+            tracker[invoice][whois] = {
                 timeStart: date,
                 workType,
             }
