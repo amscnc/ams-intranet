@@ -1,5 +1,5 @@
 <script>
-	function popRecord(data, searchDate){
+function popRecord(data, searchDate){
 		while(timeList.firstChild){
 			timeList.removeChild(timeList.lastChild)
 		}
@@ -15,6 +15,9 @@
 				if(entry[3] == employee){
 					const entryData 		= JSON.parse(entry[2])
 					const entryItem 		= document.createElement("li")
+					const invoiceEl			= document.createElement("p")
+					invoiceEl.innerText		= `Invoice: ${entry[1]}`
+					entryItem.appendChild(invoiceEl)
 					const date 				= new Date(entry[4])
 					const dateElement 		= document.createElement("p")
 					dateElement.innerText	= date.toLocaleString()
