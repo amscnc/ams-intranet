@@ -82,7 +82,8 @@ function popClocks(){
 
 whoisForm.addEventListener("submit", e=>{
     e.preventDefault()
-    localStorage.setItem("whois", whoisBox.value)
+    localStorage.setItem("whois", whoisInput.value)
+    console.log(whoisForm.value)
     location.reload()
 })
 
